@@ -9,7 +9,7 @@
     <PackageReadmeFile>readme.md</PackageReadmeFile>
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/obiwanjacobi/Dentlr</RepositoryUrl>
-    <PackageIcon>Dentlr.png</PackageIcon>
+    <PackageIcon>Dentlr_Icon.png</PackageIcon>
     <Description>Indent / Dedent token lexer (base class) for Antlr4</Description>
     <Copyright>Copyright 2022 Jacobi Software</Copyright>
     <PackageProjectUrl>https://github.com/obiwanjacobi/Dentlr</PackageProjectUrl>
@@ -31,6 +31,10 @@
 
   <ItemGroup>
     <None Update="Dentlr.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+    <None Update="Dentlr_Icon.png">
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </None>
