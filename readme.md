@@ -43,7 +43,7 @@ EOL: '\r'? '\n' | '\r';
 // ... your tokens
 ```
 
-There are two way to initialize the tokens to be used by the `DentlrLexer`.
+There are two ways to initialize the tokens to be used by the `DentlrLexer`.
 Either override the `NextToken` method to do a one-time initialization.
 
 ```csharp
@@ -83,5 +83,4 @@ An `InvalidOperationException` is throw when the tokens are not initialized.
 - Indent/Dedent token after or before Whitespace token?
 - Implement a lexer base class for other languages (java, ts, python)
 - Test if Dentlr can depend on the newest Antlr version while still allowing the unit tests to work.
-- Doc code comments
 - 

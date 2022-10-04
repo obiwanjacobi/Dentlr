@@ -5,6 +5,12 @@ using Antlr4.Runtime;
 
 namespace Dentlr
 {
+    /// <summary>
+    /// Base class for the Antlr Lexer that will generate INDENT and DEDENT tokens.
+    /// </summary>
+    /// <remarks>
+    /// Specify `options { superClass=Dentlr.DentlrLexer; }` in your lexer grammar file.
+    /// </remarks>
     public abstract class DentlrLexer : Lexer
     {
         private readonly Queue<IToken> _tokenBuffer = new();
@@ -14,19 +20,59 @@ namespace Dentlr
         private int _dedentTokenId;
         private int _eolTokenId;
 
+        /// <summary>
+        /// Pass through ctor.
+        /// </summary>
+        /// <param name="input">Must not be null.</param>
         protected DentlrLexer(ICharStream input)
             : base(input)
         { }
 
+        /// <summary>
+        /// Passs through ctor.
+        /// </summary>
+        /// <param name="input">Must not be null.</param>
+        /// <param name="output">Must not be null.</param>
+        /// <param name="errorOutput">Must not be null.</param>
         protected DentlrLexer(ICharStream input, TextWriter output, TextWriter errorOutput)
             : base(input, output, errorOutput)
         { }
 
+        /// <summary>
+        /// Gets or sets the number of spaces one indent represents.
+        /// Once set, explicitly or detecting the first indent, it is used to validate subsequent indents.
+        /// </summary>
         public int IndentSize { get; set; }
 
+        /// <summary>
+        /// Returns true when the INDENT, DEDENT and EOL tokens are initialized (greater than zero).
+        /// </summary>
         public bool AreTokensInitialized
             => _dedentTokenId > 0 && _indentTokenId > 0 && _eolTokenId > 0;
 
+        /// <summary>
+        /// Initializes the token ids for the INDENT, DEDENT and EOL tokens.
+        /// </summary>
+        /// <param name="indentTokenId">Pass in the Id of the INDENT token.</param>
+        /// <param name="dedentTokenId">Pass in the Id of the DEDENT token.</param>
+        /// <param name="eolTokenId">Pass in the Id of the EOL token.</param>
+        /// <remarks>
+        /// Call InitializeTokens by overriding the NextToken method in your lexer class:
+        /// <code>
+        /// public override IToken? NextToken()
+        /// {
+        ///     if (!AreTokensInitialized)
+        ///         InitializeTokens(INDENT, DEDENT, EOL);
+        ///     return base.NextToken();
+        /// }
+        /// </code>
+        /// Or call InitializeTokens when you create your lexer instance:
+        /// <code>
+        /// var stream = new AntlrInputStream(source);
+        /// var lexer = new MyLexer(stream);
+        /// lexer.InitializeTokens(MyLexer.INDENT, MyLexer.DEDENT, MyLexer.EOL);
+        /// </code>
+        /// </remarks>
         public void InitializeTokens(int indentTokenId, int dedentTokenId, int eolTokenId)
         {
             _indentTokenId = indentTokenId;
@@ -34,6 +80,12 @@ namespace Dentlr
             _eolTokenId = eolTokenId;
         }
 
+        /// <summary>
+        /// Injects INDENT and DEDENT tokens based on position analysis of the tokens following newline (EOL) tokens.
+        /// </summary>
+        /// <returns>Returns the new token or null.</returns>
+        /// <exception cref="InvalidOperationException">Thrown when InitializeTokens() was not called.</exception>
+        /// <exception cref="InvalidIndentException">Thrown when an invalid indent size was encountered.</exception>
         public override IToken? NextToken()
         {
             if (!AreTokensInitialized)
@@ -57,7 +109,7 @@ namespace Dentlr
                     tokenIndentLength > 0)
                 {
                     if (IndentSize == 0)
-                        IndentSize =tokenIndentLength;
+                        IndentSize = tokenIndentLength;
 
                     if (tokenIndentLength % IndentSize > 0)
                         throw new InvalidIndentException($"Invalid indent length at {token.Line}:{token.Column}");
@@ -98,7 +150,7 @@ namespace Dentlr
                     }
                 }
             }
-            
+
             if (token is not null)
                 _tokenBuffer.Enqueue(token);
 
