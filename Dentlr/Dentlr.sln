@@ -7,9 +7,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dentlr", "Dentlr.csproj", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dentlr.UnitTests", "..\Dentlr.UnitTests\Dentlr.UnitTests.csproj", "{868CD174-E7CF-44FD-90C7-DB99088ACB62}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{A8D354CA-0358-4FFB-B58A-1664824A7ED7}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Deployment", "Deployment", "{275E7F99-B657-4F4F-819B-D5D6395410F3}"
 	ProjectSection(SolutionItems) = preProject
-		..\readme.md = ..\readme.md
+		..\push-nuget.cmd = ..\push-nuget.cmd
+		..\push-test.cmd = ..\push-test.cmd
 	EndProjectSection
 EndProject
 Global

@@ -2,12 +2,38 @@
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
+    <ImplicitUsings>disable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <Title>Dentlr for Antlr4</Title>
+    <PackageReadmeFile>readme.md</PackageReadmeFile>
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>https://github.com/obiwanjacobi/Dentlr</RepositoryUrl>
+    <PackageIcon>Dentlr.png</PackageIcon>
+    <Description>Indent / Dedent token lexer (base class) for Antlr4</Description>
+    <Copyright>Copyright 2022 Jacobi Software</Copyright>
+    <PackageProjectUrl>https://github.com/obiwanjacobi/Dentlr</PackageProjectUrl>
+    <PackageTags>Antlr4</PackageTags>
+    <Company>Jacobi Software</Company>
+    <Authors>obiwanjacobi</Authors>
   </PropertyGroup>
 
   <ItemGroup>
+    <None Include="..\readme.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Antlr4.Runtime.Standard" Version="4.9.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Dentlr.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
   </ItemGroup>
 
 </Project>
