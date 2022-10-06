@@ -23,7 +23,7 @@ namespace Dentlr.UnitTests.IgnoreSpace
                 "level0"
                 ;
             
-            var lexer = CreateLexer(source);
+            var lexTokens = LexTokens(source);
             var tokens = new[]
             {
                 SpaceTokenLexer.WORD,
@@ -44,7 +44,7 @@ namespace Dentlr.UnitTests.IgnoreSpace
                 SpaceTokenLexer.WORD,
             };
 
-            Tokens.Assert(lexer.GetAllTokens(), tokens);
+            Tokens.Assert(lexTokens, tokens);
         }
 
         [Fact]
@@ -59,7 +59,7 @@ namespace Dentlr.UnitTests.IgnoreSpace
                 "level0"
                 ;
 
-            var lexer = CreateLexer(source);
+            var lexTokens = LexTokens(source);
             var tokens = new[]
             {
                 SpaceTokenLexer.EOL,
@@ -83,7 +83,7 @@ namespace Dentlr.UnitTests.IgnoreSpace
                 SpaceTokenLexer.WORD,
             };
 
-            Tokens.Assert(lexer.GetAllTokens(), tokens);
+            Tokens.Assert(lexTokens, tokens);
         }
 
         [Fact]
@@ -96,7 +96,7 @@ namespace Dentlr.UnitTests.IgnoreSpace
                 "level0"
                 ;
 
-            var lexer = CreateLexer(source);
+            var lexTokens = LexTokens(source);
             var tokens = new[]
             {
                 SpaceTokenLexer.WORD,
@@ -114,7 +114,29 @@ namespace Dentlr.UnitTests.IgnoreSpace
                 SpaceTokenLexer.WORD,
             };
 
-            Tokens.Assert(lexer.GetAllTokens(), tokens);
+            Tokens.Assert(lexTokens, tokens);
+        }
+
+        [Fact]
+        public void TestLevels_EndDedent()
+        {
+            var source =
+                "level0" + EOL +
+                INDENT + "level1"
+                ;
+
+            var lexTokens = LexTokens(source);
+            var tokens = new[]
+            {
+                IgnoreSpaceLexer.WORD,
+                IgnoreSpaceLexer.EOL,
+                IgnoreSpaceLexer.INDENT,
+                SpaceTokenLexer.WS,
+                IgnoreSpaceLexer.WORD,
+                IgnoreSpaceLexer.DEDENT
+            };
+
+            Tokens.Assert(lexTokens, tokens);
         }
 
         [Fact]
@@ -126,17 +148,16 @@ namespace Dentlr.UnitTests.IgnoreSpace
                 INDENT + "level1"                       // indent length is too short!
                 ;
 
-            var lexer = CreateLexer(source);
-            Action errorAction = () => lexer.GetAllTokens();
+            Action errorAction = () => LexTokens(source);
             errorAction.Should().Throw<InvalidIndentException>();
         }
 
-        private static SpaceTokenLexer CreateLexer(string source)
+        private static IList<IToken> LexTokens(string source)
         {
             var stream = new AntlrInputStream(source);
             var lexer = new SpaceTokenLexer(stream);
             lexer.InitializeTokens(SpaceTokenLexer.INDENT, SpaceTokenLexer.DEDENT, SpaceTokenLexer.EOL);
-            return lexer;
+            return lexer.GetAllTokens();
         }
     }
 }

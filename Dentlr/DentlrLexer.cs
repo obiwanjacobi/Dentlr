@@ -157,6 +157,16 @@ namespace Dentlr
             if (_tokenBuffer.Count > 0)
                 return _tokenBuffer.Dequeue();
 
+            // we ran out of tokens -> cleanup scheduled dedents
+            while (_dedentSchedule.Count > 0)
+            {
+                _tokenBuffer.Enqueue(_dedentSchedule.Pop());
+            }
+
+            if (_tokenBuffer.Count > 0)
+                return _tokenBuffer.Dequeue();
+
+            // the end
             return null;
 
             static int GetTokenIndentLength(IToken token)
