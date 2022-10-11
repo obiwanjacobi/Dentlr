@@ -72,7 +72,7 @@ Or call `InitializeTokens()` at the time the `MyLexer` object is created.
     ...
 ```
 
-An `InvalidOperationException` is throw when the tokens are not initialized.
+An `InvalidOperationException` is thrown when the tokens are not initialized.
 
 ---
 
@@ -80,7 +80,8 @@ An `InvalidOperationException` is throw when the tokens are not initialized.
 
 - parse tabs / TabSize property
 - invalid indent error mode (ignore, adjust, throw)
-- Indent/Dedent token after or before Whitespace token?
+- Handle multiple sequential whitespace tokens (`Sp: ' ';`)
+- Indent/Dedent token after or before Whitespace token? (before, after, remove)
 - Implement a lexer base class for other languages (java, ts, python)
 - Test if Dentlr can depend on the newest Antlr version while still allowing the unit tests to work.
 - 
