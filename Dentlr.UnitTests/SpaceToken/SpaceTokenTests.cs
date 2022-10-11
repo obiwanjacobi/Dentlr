@@ -154,7 +154,10 @@ namespace Dentlr.UnitTests.IgnoreSpace
         private static IList<IToken> LexTokens(string source)
         {
             var stream = new AntlrInputStream(source);
-            var lexer = new SpaceTokenLexer(stream);
+            var lexer = new SpaceTokenLexer(stream)
+            {
+                WhitespaceMode = WhitespaceMode.AfterIndent
+            };
             lexer.InitializeTokens(SpaceTokenLexer.INDENT, SpaceTokenLexer.DEDENT, SpaceTokenLexer.EOL);
             return lexer.GetAllTokens();
         }

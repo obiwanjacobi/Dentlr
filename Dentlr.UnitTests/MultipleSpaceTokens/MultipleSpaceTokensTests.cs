@@ -35,6 +35,8 @@ namespace Dentlr.UnitTests.IgnoreSpace
                 MultipleSpaceTokensLexer.INDENT,
                 MultipleSpaceTokensLexer.WS,
                 MultipleSpaceTokensLexer.WS,
+                MultipleSpaceTokensLexer.WS,
+                MultipleSpaceTokensLexer.WS,
                 MultipleSpaceTokensLexer.WORD,
                 MultipleSpaceTokensLexer.EOL,
                 MultipleSpaceTokensLexer.DEDENT,
@@ -77,6 +79,8 @@ namespace Dentlr.UnitTests.IgnoreSpace
                 MultipleSpaceTokensLexer.INDENT,
                 MultipleSpaceTokensLexer.WS,
                 MultipleSpaceTokensLexer.WS,
+                MultipleSpaceTokensLexer.WS,
+                MultipleSpaceTokensLexer.WS,
                 MultipleSpaceTokensLexer.WORD,
                 MultipleSpaceTokensLexer.EOL,
                 MultipleSpaceTokensLexer.DEDENT,
@@ -112,6 +116,8 @@ namespace Dentlr.UnitTests.IgnoreSpace
                 MultipleSpaceTokensLexer.WORD,
                 MultipleSpaceTokensLexer.EOL,
                 MultipleSpaceTokensLexer.INDENT,
+                MultipleSpaceTokensLexer.WS,
+                MultipleSpaceTokensLexer.WS,
                 MultipleSpaceTokensLexer.WS,
                 MultipleSpaceTokensLexer.WS,
                 MultipleSpaceTokensLexer.WORD,
@@ -163,7 +169,10 @@ namespace Dentlr.UnitTests.IgnoreSpace
         private static IList<IToken> LexTokens(string source)
         {
             var stream = new AntlrInputStream(source);
-            var lexer = new MultipleSpaceTokensLexer(stream);
+            var lexer = new MultipleSpaceTokensLexer(stream)
+            {
+                WhitespaceMode = WhitespaceMode.AfterIndent
+            };
             lexer.InitializeTokens(MultipleSpaceTokensLexer.INDENT, MultipleSpaceTokensLexer.DEDENT, MultipleSpaceTokensLexer.EOL);
             return lexer.GetAllTokens();
         }

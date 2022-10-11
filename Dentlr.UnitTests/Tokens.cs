@@ -11,7 +11,7 @@ namespace Dentlr.UnitTests
             int i = 0;
             foreach (var token in lexedTokens)
             {
-                token.Type.Should().Be(expectedTokens[i]);
+                token.Type.Should().Be(expectedTokens[i], "at index {0}", i);
                 i++;
             }
         }
