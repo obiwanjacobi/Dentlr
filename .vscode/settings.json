@@ -1,0 +1,11 @@
+{
+    "antlr4.atn.maxLabelCount": 4,
+    "antlr4.generation": {
+        "mode": "external",
+        "outputDir": "Parser",
+        "language": "CSharp",
+        "package": "Dentlr.UnitTests",
+        "listeners": false,
+        "visitors": true
+    }
+}

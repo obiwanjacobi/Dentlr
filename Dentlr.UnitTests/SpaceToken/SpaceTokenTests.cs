@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using Antlr4.Runtime;
 using FluentAssertions;
 using Xunit;
-using Zsharp.Parser;
 
 namespace Dentlr.UnitTests.IgnoreSpace
 {
@@ -128,12 +127,12 @@ namespace Dentlr.UnitTests.IgnoreSpace
             var lexTokens = LexTokens(source);
             var tokens = new[]
             {
-                IgnoreSpaceLexer.WORD,
-                IgnoreSpaceLexer.EOL,
-                IgnoreSpaceLexer.INDENT,
+                SpaceTokenLexer.WORD,
+                SpaceTokenLexer.EOL,
+                SpaceTokenLexer.INDENT,
                 SpaceTokenLexer.WS,
-                IgnoreSpaceLexer.WORD,
-                IgnoreSpaceLexer.DEDENT
+                SpaceTokenLexer.WORD,
+                SpaceTokenLexer.DEDENT
             };
 
             Tokens.Assert(lexTokens, tokens);

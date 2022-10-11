@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using Antlr4.Runtime;
 using FluentAssertions;
 using Xunit;
-using Zsharp.Parser;
 
 namespace Dentlr.UnitTests.IgnoreSpace
 {

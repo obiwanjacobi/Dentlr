@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-// Generated from c:\My\MyProjects\Zsharp\src2\Maja\Dentlr.UnitTests\SpaceToken\SpaceTokenLexer.g4 by ANTLR 4.9.2
+// Generated from c:\My\MyProjects\Dentlr\Dentlr.UnitTests\SpaceToken\SpaceTokenLexer.g4 by ANTLR 4.9.2
 
 // Unreachable code detected
 #pragma warning disable 0162
@@ -19,7 +19,7 @@
 // Ambiguous reference in cref attribute
 #pragma warning disable 419
 
-namespace Zsharp.Parser {
+namespace Dentlr.UnitTests {
 using System;
 using System.IO;
 using System.Text;
@@ -123,4 +123,4 @@ public partial class SpaceTokenLexer : Dentlr.DentlrLexer {
 
 
 }
-} // namespace Zsharp.Parser
+} // namespace Dentlr.UnitTests

@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-// Generated from c:\My\MyProjects\Dentlr\Dentlr.UnitTests\IgnoreSpace\IgnoreSpaceLexer.g4 by ANTLR 4.9.2
+// Generated from c:\My\MyProjects\Dentlr\Dentlr.UnitTests\MultipleSpaceTokens\MultipleSpaceTokensLexer.g4 by ANTLR 4.9.2
 
 // Unreachable code detected
 #pragma warning disable 0162
@@ -30,7 +30,7 @@ using DFA = Antlr4.Runtime.Dfa.DFA;
 
 [System.CodeDom.Compiler.GeneratedCode("ANTLR", "4.9.2")]
 [System.CLSCompliant(false)]
-public partial class IgnoreSpaceLexer : Dentlr.DentlrLexer {
+public partial class MultipleSpaceTokensLexer : Dentlr.DentlrLexer {
 	protected static DFA[] decisionToDFA;
 	protected static PredictionContextCache sharedContextCache = new PredictionContextCache();
 	public const int
@@ -48,10 +48,10 @@ public partial class IgnoreSpaceLexer : Dentlr.DentlrLexer {
 	};
 
 
-	public IgnoreSpaceLexer(ICharStream input)
+	public MultipleSpaceTokensLexer(ICharStream input)
 	: this(input, Console.Out, Console.Error) { }
 
-	public IgnoreSpaceLexer(ICharStream input, TextWriter output, TextWriter errorOutput)
+	public MultipleSpaceTokensLexer(ICharStream input, TextWriter output, TextWriter errorOutput)
 	: base(input, output, errorOutput)
 	{
 		Interpreter = new LexerATNSimulator(this, _ATN, decisionToDFA, sharedContextCache);
@@ -73,7 +73,7 @@ public partial class IgnoreSpaceLexer : Dentlr.DentlrLexer {
 		}
 	}
 
-	public override string GrammarFileName { get { return "IgnoreSpaceLexer.g4"; } }
+	public override string GrammarFileName { get { return "MultipleSpaceTokensLexer.g4"; } }
 
 	public override string[] RuleNames { get { return ruleNames; } }
 
@@ -83,7 +83,7 @@ public partial class IgnoreSpaceLexer : Dentlr.DentlrLexer {
 
 	public override string SerializedAtn { get { return new string(_serializedATN); } }
 
-	static IgnoreSpaceLexer() {
+	static MultipleSpaceTokensLexer() {
 		decisionToDFA = new DFA[_ATN.NumberOfDecisions];
 		for (int i = 0; i < _ATN.NumberOfDecisions; i++) {
 			decisionToDFA[i] = new DFA(_ATN.GetDecisionState(i), i);
@@ -91,30 +91,27 @@ public partial class IgnoreSpaceLexer : Dentlr.DentlrLexer {
 	}
 	private static char[] _serializedATN = {
 		'\x3', '\x608B', '\xA72A', '\x8133', '\xB9ED', '\x417C', '\x3BE7', '\x7786', 
-		'\x5964', '\x2', '\a', '\x19', '\b', '\x1', '\x4', '\x2', '\t', '\x2', 
+		'\x5964', '\x2', '\a', '\x17', '\b', '\x1', '\x4', '\x2', '\t', '\x2', 
 		'\x4', '\x3', '\t', '\x3', '\x4', '\x4', '\t', '\x4', '\x3', '\x2', '\x6', 
 		'\x2', '\v', '\n', '\x2', '\r', '\x2', '\xE', '\x2', '\f', '\x3', '\x3', 
-		'\x3', '\x3', '\x3', '\x3', '\x3', '\x3', '\x3', '\x4', '\x5', '\x4', 
-		'\x14', '\n', '\x4', '\x3', '\x4', '\x3', '\x4', '\x5', '\x4', '\x18', 
-		'\n', '\x4', '\x2', '\x2', '\x5', '\x3', '\x5', '\x5', '\x6', '\a', '\a', 
-		'\x3', '\x2', '\x4', '\x5', '\x2', '\x32', ';', '\x43', '\\', '\x63', 
-		'|', '\x4', '\x2', '\v', '\v', '\"', '\"', '\x2', '\x1B', '\x2', '\x3', 
-		'\x3', '\x2', '\x2', '\x2', '\x2', '\x5', '\x3', '\x2', '\x2', '\x2', 
-		'\x2', '\a', '\x3', '\x2', '\x2', '\x2', '\x3', '\n', '\x3', '\x2', '\x2', 
-		'\x2', '\x5', '\xE', '\x3', '\x2', '\x2', '\x2', '\a', '\x17', '\x3', 
-		'\x2', '\x2', '\x2', '\t', '\v', '\t', '\x2', '\x2', '\x2', '\n', '\t', 
-		'\x3', '\x2', '\x2', '\x2', '\v', '\f', '\x3', '\x2', '\x2', '\x2', '\f', 
-		'\n', '\x3', '\x2', '\x2', '\x2', '\f', '\r', '\x3', '\x2', '\x2', '\x2', 
-		'\r', '\x4', '\x3', '\x2', '\x2', '\x2', '\xE', '\xF', '\t', '\x3', '\x2', 
-		'\x2', '\xF', '\x10', '\x3', '\x2', '\x2', '\x2', '\x10', '\x11', '\b', 
-		'\x3', '\x2', '\x2', '\x11', '\x6', '\x3', '\x2', '\x2', '\x2', '\x12', 
-		'\x14', '\a', '\xF', '\x2', '\x2', '\x13', '\x12', '\x3', '\x2', '\x2', 
-		'\x2', '\x13', '\x14', '\x3', '\x2', '\x2', '\x2', '\x14', '\x15', '\x3', 
-		'\x2', '\x2', '\x2', '\x15', '\x18', '\a', '\f', '\x2', '\x2', '\x16', 
-		'\x18', '\a', '\xF', '\x2', '\x2', '\x17', '\x13', '\x3', '\x2', '\x2', 
-		'\x2', '\x17', '\x16', '\x3', '\x2', '\x2', '\x2', '\x18', '\b', '\x3', 
-		'\x2', '\x2', '\x2', '\x6', '\x2', '\f', '\x13', '\x17', '\x3', '\b', 
-		'\x2', '\x2',
+		'\x3', '\x3', '\x3', '\x4', '\x5', '\x4', '\x12', '\n', '\x4', '\x3', 
+		'\x4', '\x3', '\x4', '\x5', '\x4', '\x16', '\n', '\x4', '\x2', '\x2', 
+		'\x5', '\x3', '\x5', '\x5', '\x6', '\a', '\a', '\x3', '\x2', '\x4', '\x5', 
+		'\x2', '\x32', ';', '\x43', '\\', '\x63', '|', '\x4', '\x2', '\v', '\v', 
+		'\"', '\"', '\x2', '\x19', '\x2', '\x3', '\x3', '\x2', '\x2', '\x2', '\x2', 
+		'\x5', '\x3', '\x2', '\x2', '\x2', '\x2', '\a', '\x3', '\x2', '\x2', '\x2', 
+		'\x3', '\n', '\x3', '\x2', '\x2', '\x2', '\x5', '\xE', '\x3', '\x2', '\x2', 
+		'\x2', '\a', '\x15', '\x3', '\x2', '\x2', '\x2', '\t', '\v', '\t', '\x2', 
+		'\x2', '\x2', '\n', '\t', '\x3', '\x2', '\x2', '\x2', '\v', '\f', '\x3', 
+		'\x2', '\x2', '\x2', '\f', '\n', '\x3', '\x2', '\x2', '\x2', '\f', '\r', 
+		'\x3', '\x2', '\x2', '\x2', '\r', '\x4', '\x3', '\x2', '\x2', '\x2', '\xE', 
+		'\xF', '\t', '\x3', '\x2', '\x2', '\xF', '\x6', '\x3', '\x2', '\x2', '\x2', 
+		'\x10', '\x12', '\a', '\xF', '\x2', '\x2', '\x11', '\x10', '\x3', '\x2', 
+		'\x2', '\x2', '\x11', '\x12', '\x3', '\x2', '\x2', '\x2', '\x12', '\x13', 
+		'\x3', '\x2', '\x2', '\x2', '\x13', '\x16', '\a', '\f', '\x2', '\x2', 
+		'\x14', '\x16', '\a', '\xF', '\x2', '\x2', '\x15', '\x11', '\x3', '\x2', 
+		'\x2', '\x2', '\x15', '\x14', '\x3', '\x2', '\x2', '\x2', '\x16', '\b', 
+		'\x3', '\x2', '\x2', '\x2', '\x6', '\x2', '\f', '\x11', '\x15', '\x2',
 	};
 
 	public static readonly ATN _ATN =
