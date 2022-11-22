@@ -6,12 +6,13 @@
     <Nullable>enable</Nullable>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <Title>Dentlr for Antlr4</Title>
+    <Version>1.0.0</Version>
     <PackageReadmeFile>readme.md</PackageReadmeFile>
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/obiwanjacobi/Dentlr</RepositoryUrl>
     <PackageIcon>Dentlr_Icon.png</PackageIcon>
     <Description>Indent / Dedent token lexer (base class) for Antlr4</Description>
-    <Copyright>Copyright 2022 Jacobi Software</Copyright>
+    <Copyright>Copyright © Jacobi Software 2022</Copyright>
     <PackageProjectUrl>https://github.com/obiwanjacobi/Dentlr</PackageProjectUrl>
     <PackageTags>Antlr4</PackageTags>
     <Company>Jacobi Software</Company>
