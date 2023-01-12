@@ -13,8 +13,8 @@ Dentlr is dependent on: **Antlr4 9.2.0**
 - Separate the Antlr lexer and parser grammar files. Put `options { tokenVocab=MyLexer; }` in the `parser grammer MyParser;` file.
 - Detects indents only after a newline.
 - The first indent encountered determines the indent size/length. All subsequent indents must be a multiple of that size or an `InvalidIndentException` is thrown.
-- Use the IndentSize property to preset a fixed number of spaces to use for an `INDENT`.
-- Any tokens that match whitespace are emitted after the `INDENT` and `DEDENT` tokens.
+- Optionally use the IndentSize property to preset a fixed number of spaces to use for an `INDENT`.
+- Flexible handling of tokens that match whitespace which can be emitted before or after the `INDENT` and `DEDENT` tokens or skipped entirely.
 - Does not detect tabs `\t` (todo).
 
 ---
@@ -44,7 +44,7 @@ EOL: '\r'? '\n' | '\r';
 ```
 
 There are two ways to initialize the tokens to be used by the `DentlrLexer`.
-Either override the `NextToken` method to do a one-time initialization.
+Either override the `NextToken` method on your Lexer class to do a one-time initialization.
 
 ```csharp
 public partial class MyLexer
@@ -81,5 +81,3 @@ An `InvalidOperationException` is thrown when the tokens are not initialized.
 - parse tabs / TabSize property
 - invalid indent error mode (ignore, adjust, throw)
 - Implement a lexer base class for other languages (java, ts, python)
-- Test if Dentlr can depend on the newest Antlr version while still allowing the unit tests to work.
-- 
