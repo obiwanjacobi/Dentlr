@@ -78,6 +78,8 @@ An `InvalidOperationException` is thrown when the tokens are not initialized.
 
 ## TODO
 
+- Tokens in ctor
+- Skip spaces as default mode
 - parse tabs / TabSize property
-- invalid indent error mode (ignore, adjust, throw)
+- invalid indent error mode (as spaces, ignore, adjust, throw)
 - Implement a lexer base class for other languages (java, ts, python)
