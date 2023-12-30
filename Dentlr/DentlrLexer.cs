@@ -26,7 +26,9 @@ namespace Dentlr
         /// <param name="input">Must not be null.</param>
         protected DentlrLexer(ICharStream input)
             : base(input)
-        { }
+        {
+            WhitespaceMode = WhitespaceMode.Skip;
+        }
 
         /// <summary>
         /// Passs through ctor.
@@ -36,11 +38,13 @@ namespace Dentlr
         /// <param name="errorOutput">Must not be null.</param>
         protected DentlrLexer(ICharStream input, TextWriter output, TextWriter errorOutput)
             : base(input, output, errorOutput)
-        { }
+        {
+            WhitespaceMode = WhitespaceMode.Skip;
+        }
 
         /// <summary>
         /// Gets or sets the number of spaces one indent represents.
-        /// Once set, explicitly or detecting the first indent, it is used to validate subsequent indents.
+        /// Once set, explicitly or by detecting the first indent, it is used to validate subsequent indents.
         /// </summary>
         public int IndentSize { get; set; }
 
@@ -99,8 +103,7 @@ namespace Dentlr
             var token = base.NextToken();
             if (token?.Type == _eolTokenId)
             {
-                var newlineToken = token;
-                _tokenBuffer.Enqueue(newlineToken);
+                _tokenBuffer.Enqueue(token);
 
                 var wsTokens = new List<IToken>();
                 // next token after a newline could be an indent
@@ -146,7 +149,9 @@ namespace Dentlr
                 }
                 else
                 {
-                    FlushScheduledDedents();
+                    if (nonWsToken is null ||
+                        nonWsToken.Type != _eolTokenId)
+                        FlushScheduledDedents();
 
                     if (nonWsToken is not null)
                         _tokenBuffer.Enqueue(nonWsToken);
@@ -200,8 +205,9 @@ namespace Dentlr
             var indentLength = 0;
             var token = base.NextToken();
             while (token is not null &&
+                token.Type != _eolTokenId &&
                 String.IsNullOrWhiteSpace(token.Text))
-            { 
+            {
                 indentLength += token.Text.Length;
                 wsTokens.Add(token);
                 token = base.NextToken();

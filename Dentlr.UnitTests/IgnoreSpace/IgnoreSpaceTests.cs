@@ -130,6 +130,69 @@ namespace Dentlr.UnitTests.IgnoreSpace
         }
 
         [Fact]
+        public void TestLevels_RepeatIndent()
+        {
+            var source =
+                "level0" + EOL +
+                INDENT + "level1a" + EOL +
+                INDENT + "level1b" + EOL
+                ;
+
+            var lexTokens = LexTokens(source);
+            var tokens = new[]
+            {
+                IgnoreSpaceLexer.WORD,
+                IgnoreSpaceLexer.EOL,
+                IgnoreSpaceLexer.INDENT,
+                IgnoreSpaceLexer.WORD,
+                IgnoreSpaceLexer.EOL,
+                IgnoreSpaceLexer.WORD,
+                IgnoreSpaceLexer.EOL,
+                IgnoreSpaceLexer.DEDENT
+            };
+
+            Tokens.Assert(lexTokens, tokens);
+        }
+
+        [Fact]
+        public void TestLevels_ExtraNewLines()
+        {
+            var source =
+                "level0" + EOL +
+                INDENT + "level1" + EOL +
+                EOL +
+                EOL +
+                "level0" + EOL +
+                INDENT + "level1a" + EOL +
+                EOL +
+                INDENT + "level1b"
+                ;
+
+            var lexTokens = LexTokens(source);
+            var tokens = new[]
+            {
+                IgnoreSpaceLexer.WORD,
+                IgnoreSpaceLexer.EOL,
+                IgnoreSpaceLexer.INDENT,
+                IgnoreSpaceLexer.WORD,
+                IgnoreSpaceLexer.EOL,
+                IgnoreSpaceLexer.EOL,
+                IgnoreSpaceLexer.EOL,
+                IgnoreSpaceLexer.DEDENT,
+                IgnoreSpaceLexer.WORD,
+                IgnoreSpaceLexer.EOL,
+                IgnoreSpaceLexer.INDENT,
+                IgnoreSpaceLexer.WORD,
+                IgnoreSpaceLexer.EOL,
+                IgnoreSpaceLexer.EOL,
+                IgnoreSpaceLexer.WORD,
+                IgnoreSpaceLexer.DEDENT
+            };
+
+            Tokens.Assert(lexTokens, tokens);
+        }
+
+        [Fact]
         public void TestLevels_InvalidIndentException()
         {
             var source =

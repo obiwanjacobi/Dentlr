@@ -154,6 +154,79 @@ namespace Dentlr.UnitTests.IgnoreSpace
         }
 
         [Fact]
+        public void TestLevels_RepeatIndent()
+        {
+            var source =
+                "level0" + EOL +
+                INDENT + "level1a" + EOL +
+                INDENT + "level1b" + EOL
+                ;
+
+            var lexTokens = LexTokens(source);
+            var tokens = new[]
+            {
+                MultipleSpaceTokensLexer.WORD,
+                MultipleSpaceTokensLexer.EOL,
+                MultipleSpaceTokensLexer.INDENT,
+                MultipleSpaceTokensLexer.WS,
+                MultipleSpaceTokensLexer.WS,
+                MultipleSpaceTokensLexer.WORD,
+                MultipleSpaceTokensLexer.EOL,
+                MultipleSpaceTokensLexer.WS,
+                MultipleSpaceTokensLexer.WS,
+                MultipleSpaceTokensLexer.WORD,
+                MultipleSpaceTokensLexer.EOL,
+                MultipleSpaceTokensLexer.DEDENT
+            };
+
+            Tokens.Assert(lexTokens, tokens);
+        }
+
+        [Fact]
+        public void TestLevels_ExtraNewLines()
+        {
+            var source =
+                "level0" + EOL +
+                INDENT + "level1" + EOL +
+                EOL +
+                EOL +
+                "level0" + EOL +
+                INDENT + "level1a" + EOL +
+                EOL +
+                INDENT + "level1b"
+                ;
+
+            var lexTokens = LexTokens(source);
+            var tokens = new[]
+            {
+                MultipleSpaceTokensLexer.WORD,
+                MultipleSpaceTokensLexer.EOL,
+                MultipleSpaceTokensLexer.INDENT,
+                MultipleSpaceTokensLexer.WS,
+                MultipleSpaceTokensLexer.WS,
+                MultipleSpaceTokensLexer.WORD,
+                MultipleSpaceTokensLexer.EOL,
+                MultipleSpaceTokensLexer.EOL,
+                MultipleSpaceTokensLexer.EOL,
+                MultipleSpaceTokensLexer.DEDENT,
+                MultipleSpaceTokensLexer.WORD,
+                MultipleSpaceTokensLexer.EOL,
+                MultipleSpaceTokensLexer.INDENT,
+                MultipleSpaceTokensLexer.WS,
+                MultipleSpaceTokensLexer.WS,
+                MultipleSpaceTokensLexer.WORD,
+                MultipleSpaceTokensLexer.EOL,
+                MultipleSpaceTokensLexer.EOL,
+                MultipleSpaceTokensLexer.WS,
+                MultipleSpaceTokensLexer.WS,
+                MultipleSpaceTokensLexer.WORD,
+                MultipleSpaceTokensLexer.DEDENT
+            };
+
+            Tokens.Assert(lexTokens, tokens);
+        }
+
+        [Fact]
         public void TestLevels_InvalidIndentException()
         {
             var source =
