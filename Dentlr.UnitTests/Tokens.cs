@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Antlr4.Runtime;
 using FluentAssertions;
 using Xunit.Abstractions;
@@ -8,12 +7,12 @@ namespace Dentlr.UnitTests;
 
 internal static class Tokens
 {
-    public static void Assert(IList<IToken> lexedTokens, int[] expectedTokens)
+    public static void Assert(IList<IToken> lexedTokens, int[] expectedTokens, string source = "")
     {
         int i = 0;
         foreach (var token in lexedTokens)
         {
-            token.Type.Should().Be(expectedTokens[i], "at index {0}", i);
+            token.Type.Should().Be(expectedTokens[i], "at index {0} ({1})", i, source);
             i++;
         }
     }

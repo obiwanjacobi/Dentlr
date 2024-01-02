@@ -1,21 +1,19 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using Antlr4.Runtime;
 using FluentAssertions;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace Dentlr.UnitTests.IgnoreSpace;
+namespace Dentlr.UnitTests;
 
-public class SpaceTokenTests
+public class LexerTokenTests
 {
     private const string EOL = "\n";
     private const string INDENT = "  ";
 
     private readonly ITestOutputHelper _output;
 
-    public SpaceTokenTests(ITestOutputHelper output)
+    public LexerTokenTests(ITestOutputHelper output)
         => _output = output;
 
     [Fact]
@@ -29,7 +27,6 @@ public class SpaceTokenTests
             "level0"
             ;
 
-        var lexTokens = LexTokens(source);
         var tokens = new[]
         {
             SpaceTokenLexer.WORD,
@@ -47,7 +44,7 @@ public class SpaceTokenTests
             SpaceTokenLexer.WORD,
         };
 
-        Tokens.Assert(lexTokens, tokens);
+        AssertTokens(source, tokens);
     }
 
     [Fact]
@@ -62,7 +59,6 @@ public class SpaceTokenTests
             "level0"
             ;
 
-        var lexTokens = LexTokens(source);
         var tokens = new[]
         {
             SpaceTokenLexer.EOL,
@@ -83,7 +79,7 @@ public class SpaceTokenTests
             SpaceTokenLexer.WORD,
         };
 
-        Tokens.Assert(lexTokens, tokens);
+        AssertTokens(source, tokens);
     }
 
     [Fact]
@@ -96,7 +92,6 @@ public class SpaceTokenTests
             "level0"
             ;
 
-        var lexTokens = LexTokens(source);
         var tokens = new[]
         {
             SpaceTokenLexer.WORD,
@@ -112,7 +107,7 @@ public class SpaceTokenTests
             SpaceTokenLexer.WORD,
         };
 
-        Tokens.Assert(lexTokens, tokens);
+        AssertTokens(source, tokens);
     }
 
     [Fact]
@@ -123,7 +118,6 @@ public class SpaceTokenTests
             INDENT + "level1"
             ;
 
-        var lexTokens = LexTokens(source);
         var tokens = new[]
         {
             SpaceTokenLexer.WORD,
@@ -133,7 +127,7 @@ public class SpaceTokenTests
             SpaceTokenLexer.DEDENT
         };
 
-        Tokens.Assert(lexTokens, tokens);
+        AssertTokens(source, tokens);
     }
 
     [Fact]
@@ -144,7 +138,6 @@ public class SpaceTokenTests
             INDENT + "level1" + EOL
             ;
 
-        var lexTokens = LexTokens(source);
         var tokens = new[]
         {
             SpaceTokenLexer.WORD,
@@ -155,7 +148,7 @@ public class SpaceTokenTests
             SpaceTokenLexer.DEDENT
         };
 
-        Tokens.Assert(lexTokens, tokens);
+        AssertTokens(source, tokens);
     }
 
     [Fact]
@@ -167,7 +160,6 @@ public class SpaceTokenTests
             INDENT + "level1b" + EOL
             ;
 
-        var lexTokens = LexTokens(source);
         var tokens = new[]
         {
             SpaceTokenLexer.WORD,
@@ -180,7 +172,7 @@ public class SpaceTokenTests
             SpaceTokenLexer.DEDENT
         };
 
-        Tokens.Assert(lexTokens, tokens);
+        AssertTokens(source, tokens);
     }
 
     [Fact]
@@ -197,7 +189,6 @@ public class SpaceTokenTests
             INDENT + "level1b"
             ;
 
-        var lexTokens = LexTokens(source);
         var tokens = new[]
         {
             SpaceTokenLexer.WORD,
@@ -218,7 +209,7 @@ public class SpaceTokenTests
             SpaceTokenLexer.DEDENT
         };
 
-        Tokens.Assert(lexTokens, tokens);
+        AssertTokens(source, tokens);
     }
 
     [Fact]
@@ -230,17 +221,50 @@ public class SpaceTokenTests
             INDENT + "level1"                       // indent length is too short!
             ;
 
-        Action errorAction = () => LexTokens(source);
+        Action errorAction = () => AssertSpaceTokens(source, []);
+        errorAction.Should().Throw<InvalidIndentException>();
+
+        errorAction = () => AssertIgnoreSpaceTokens(source, []);
+        errorAction.Should().Throw<InvalidIndentException>();
+
+        errorAction = () => AssertMultipleSpaceTokens(source, []);
         errorAction.Should().Throw<InvalidIndentException>();
     }
 
-    private IList<IToken> LexTokens(string source)
+    private void AssertTokens(string source, int[] expectedTokens)
+    {
+        AssertSpaceTokens(source, expectedTokens);
+        AssertIgnoreSpaceTokens(source, expectedTokens);
+        AssertMultipleSpaceTokens(source, expectedTokens);
+    }
+
+    private void AssertSpaceTokens(string source, int[] expectedTokens)
     {
         var stream = new AntlrInputStream(source);
         var lexer = new SpaceTokenLexer(stream);
         lexer.InitializeTokens(SpaceTokenLexer.INDENT, SpaceTokenLexer.DEDENT, SpaceTokenLexer.EOL);
-        var lexTokens = lexer.GetAllTokens();
-        _output.Write(lexer.TokenTypeMap.ToDictionary(kvp => kvp.Value, kvp => kvp.Key), lexTokens);
-        return lexTokens;
+        var tokens = lexer.GetAllTokens();
+        //_output.Write(lexer.TokenTypeMap.ToDictionary(kvp => kvp.Value, kvp => kvp.Key), tokens);
+        Tokens.Assert(tokens, expectedTokens, nameof(SpaceTokenLexer));
+    }
+
+    private void AssertIgnoreSpaceTokens(string source, int[] expectedTokens)
+    {
+        var stream = new AntlrInputStream(source);
+        var lexer = new IgnoreSpaceLexer(stream);
+        lexer.InitializeTokens(IgnoreSpaceLexer.INDENT, IgnoreSpaceLexer.DEDENT, IgnoreSpaceLexer.EOL);
+        var tokens = lexer.GetAllTokens();
+        //_output.Write(lexer.TokenTypeMap.ToDictionary(kvp => kvp.Value, kvp => kvp.Key), tokens);
+        Tokens.Assert(tokens, expectedTokens, nameof(IgnoreSpaceLexer));
+    }
+
+    private void AssertMultipleSpaceTokens(string source, int[] expectedTokens)
+    {
+        var stream = new AntlrInputStream(source);
+        var lexer = new MultipleSpaceTokensLexer(stream);
+        lexer.InitializeTokens(MultipleSpaceTokensLexer.INDENT, MultipleSpaceTokensLexer.DEDENT, MultipleSpaceTokensLexer.EOL);
+        var tokens = lexer.GetAllTokens();
+        //_output.Write(lexer.TokenTypeMap.ToDictionary(kvp => kvp.Value, kvp => kvp.Key), tokens);
+        Tokens.Assert(tokens, expectedTokens, nameof(MultipleSpaceTokensLexer));
     }
 }
