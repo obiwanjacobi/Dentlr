@@ -26,9 +26,7 @@ namespace Dentlr
         /// <param name="input">Must not be null.</param>
         protected DentlrLexer(ICharStream input)
             : base(input)
-        {
-            WhitespaceMode = WhitespaceMode.Skip;
-        }
+        { }
 
         /// <summary>
         /// Passs through ctor.
@@ -38,9 +36,7 @@ namespace Dentlr
         /// <param name="errorOutput">Must not be null.</param>
         protected DentlrLexer(ICharStream input, TextWriter output, TextWriter errorOutput)
             : base(input, output, errorOutput)
-        {
-            WhitespaceMode = WhitespaceMode.Skip;
-        }
+        { }
 
         /// <summary>
         /// Gets or sets the number of spaces one indent represents.
@@ -84,8 +80,6 @@ namespace Dentlr
             _eolTokenId = eolTokenId;
         }
 
-        public WhitespaceMode WhitespaceMode { get; set; }
-
         /// <summary>
         /// Injects INDENT and DEDENT tokens based on position analysis of the tokens following newline (EOL) tokens.
         /// </summary>
@@ -107,50 +101,25 @@ namespace Dentlr
 
                 var wsTokens = new List<IToken>();
                 // next token after a newline could be an indent
-                var tokenIndentLength = ScanWhitespaceTokens(wsTokens, out IToken? nonWsToken);
+                var tokenIndentLength = ScanWhitespaceTokens(ref token, wsTokens, out IToken? nonWsToken);
 
                 if (tokenIndentLength > 0)
                 {
                     if (IndentSize == 0)
                         IndentSize = tokenIndentLength;
 
-                    // TODO: invalid indent mode
                     if (tokenIndentLength % IndentSize > 0)
                         throw new InvalidIndentException($"Invalid indent length at {token.Line}:{token.Column}");
 
                     var indentCount = tokenIndentLength / IndentSize;
-                    var scheduleCount = _dedentSchedule.Count;
-
-                    var indentTokens = new List<IToken>();
-                    // text is less indented than before
-                    if (indentCount < scheduleCount)
-                    {
-                        // emit dedent tokens
-                        for (int i = 0; i < scheduleCount - indentCount; i++)
-                        {
-                            indentTokens.Add(_dedentSchedule.Pop());
-                        }
-                    }
-                    // text is more indented than before
-                    else if (indentCount > scheduleCount)
-                    {
-                        // emit indent tokens
-                        for (int i = scheduleCount; i < indentCount; i++)
-                        {
-                            var indentToken = CreateToken(_indentTokenId, i, token);
-                            indentTokens.Add(indentToken);
-
-                            var dedentToken = CreateToken(_dedentTokenId, i, token);
-                            _dedentSchedule.Push(dedentToken);
-                        }
-                    }
-
+                    var indentTokens = ProcessIndentDedent(token, indentCount);
                     EnqueueTokens(wsTokens, indentTokens, nonWsToken);
                 }
                 else
                 {
-                    if (nonWsToken is null ||
-                        nonWsToken.Type != _eolTokenId)
+                    EnqueueTokens(wsTokens);
+
+                    if (nonWsToken is null || nonWsToken.Type != _eolTokenId)
                         FlushScheduledDedents();
 
                     if (nonWsToken is not null)
@@ -158,7 +127,12 @@ namespace Dentlr
                 }
             }
             else if (token is not null)
+            {
+                if (token.Type == DentlrLexer.Eof)
+                    FlushScheduledDedents();
+
                 _tokenBuffer.Enqueue(token);
+            }
 
             if (_tokenBuffer.Count > 0)
                 return _tokenBuffer.Dequeue();
@@ -173,49 +147,82 @@ namespace Dentlr
             return null;
         }
 
+        private List<IToken> ProcessIndentDedent(IToken eolToken, int indentCount)
+        {
+            var indentTokens = new List<IToken>();
+            var scheduleCount = _dedentSchedule.Count;
+            
+            // text is less indented than before
+            if (indentCount < scheduleCount)
+            {
+                // emit dedent tokens
+                for (int i = 0; i < scheduleCount - indentCount; i++)
+                {
+                    indentTokens.Add(_dedentSchedule.Pop());
+                }
+            }
+            // text is more indented than before
+            else if (indentCount > scheduleCount)
+            {
+                // emit indent tokens
+                for (int i = scheduleCount; i < indentCount; i++)
+                {
+                    var indentToken = CreateIndentToken(eolToken, indentCount);
+                    indentTokens.Add(indentToken);
+
+                    var dedentToken = CreateDedentToken(eolToken);
+                    _dedentSchedule.Push(dedentToken);
+                }
+            }
+
+            return indentTokens;
+        }
+
         private void EnqueueTokens(IList<IToken> wsTokens, IList<IToken> indentTokens, IToken? nonWsToken)
         {
-            switch (WhitespaceMode)
-            {
-                case WhitespaceMode.BeforeIndent:
-                    EnqueueList(wsTokens);
-                    EnqueueList(indentTokens);
-                    break;
-                case WhitespaceMode.AfterIndent:
-                    EnqueueList(indentTokens);
-                    EnqueueList(wsTokens);
-                    break;
-                case WhitespaceMode.Skip:
-                    EnqueueList(indentTokens);
-                    break;
-            }
+            EnqueueTokens(wsTokens);
+            EnqueueTokens(indentTokens);
 
             if (nonWsToken is not null)
                 _tokenBuffer.Enqueue(nonWsToken);
-
-            void EnqueueList(IList<IToken> tokens)
-            {
-                foreach(var token in tokens)
-                    _tokenBuffer.Enqueue(token);
-            }
         }
 
-        private int ScanWhitespaceTokens(IList<IToken> wsTokens, out IToken? nextToken)
+        private void EnqueueTokens(IList<IToken> tokens)
         {
+            foreach (var token in tokens)
+                _tokenBuffer.Enqueue(token);
+        }
+
+        private int ScanWhitespaceTokens(ref IToken eolToken, List<IToken> wsTokens, out IToken? nextToken)
+        {
+            var wsCache = new List<IToken>();
             var indentLength = 0;
+
             var token = base.NextToken();
             while (token is not null &&
-                token.Type != _eolTokenId &&
+                token.Type != Eof &&
                 String.IsNullOrWhiteSpace(token.Text))
             {
-                indentLength += token.Text.Length;
-                wsTokens.Add(token);
+                if (token.Type == _eolTokenId)
+                {
+                    eolToken = token;
+                    wsTokens.AddRange(wsCache);
+                    wsTokens.Add(token);
+                    wsCache.Clear();
+                    indentLength = 0;
+                }
+                else
+                {
+                    indentLength += token.Text.Length;
+                    wsCache.Add(token);
+                }
+
                 token = base.NextToken();
             }
 
             nextToken = token;
             if (token is not null &&
-                wsTokens.Count == 0)
+                indentLength == 0)
                 indentLength = token.Column;
             
             return indentLength;
@@ -229,12 +236,19 @@ namespace Dentlr
             }
         }
 
-        private IToken CreateToken(int tokenId, int offset, IToken fromToken)
+        private IToken CreateIndentToken(IToken eolToken, int indent)
+            => new DentlrToken(
+                new string(' ', indent * IndentSize),
+                _indentTokenId, eolToken.Line + 1, 0,
+                eolToken.Channel, -1, 0, indent * IndentSize,
+                eolToken.TokenSource, eolToken.InputStream);
+
+        private IToken CreateDedentToken(IToken eolToken)
             => new DentlrToken(
                 String.Empty,
-                tokenId, fromToken.Line, fromToken.Column + offset * IndentSize,
-                fromToken.Channel, fromToken.TokenIndex, fromToken.StartIndex, fromToken.StopIndex,
-                fromToken.TokenSource, fromToken.InputStream);
+                _dedentTokenId, eolToken.Line + 1, 0,   // line/col refer to indent counter part
+                eolToken.Channel, -1, -1, -1,
+                eolToken.TokenSource, eolToken.InputStream);
 
         private sealed class DentlrToken : IToken
         {
@@ -266,12 +280,5 @@ namespace Dentlr
             public ITokenSource TokenSource { get; }
             public ICharStream InputStream { get; }
         }
-    }
-
-    public enum WhitespaceMode
-    {
-        BeforeIndent,
-        AfterIndent,
-        Skip,
     }
 }

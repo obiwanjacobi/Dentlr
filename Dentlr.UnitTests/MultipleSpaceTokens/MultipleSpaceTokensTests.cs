@@ -1,253 +1,246 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Antlr4.Runtime;
 using FluentAssertions;
 using Xunit;
+using Xunit.Abstractions;
 
-namespace Dentlr.UnitTests.IgnoreSpace
+namespace Dentlr.UnitTests.IgnoreSpace;
+
+public class MultipleSpaceTokensTests
 {
-    public class MultipleSpaceTokensTests
+    private const string EOL = "\n";
+    private const string INDENT = "  ";
+
+    private readonly ITestOutputHelper _output;
+
+    public MultipleSpaceTokensTests(ITestOutputHelper output)
+        => _output = output;
+
+    [Fact]
+    public void TestLevels_Gradual()
     {
-        private const string EOL = "\n";
-        private const string INDENT = "  ";
+        var source =
+            "level0" + EOL +
+            INDENT + "level1" + EOL +
+            INDENT + INDENT + "level2" + EOL +
+            INDENT + "level1" + EOL +
+            "level0"
+            ;
 
-        [Fact]
-        public void TestLevels_Gradual()
+        var lexTokens = LexTokens(source);
+        var tokens = new[]
         {
-            var source =
-                "level0" + EOL +
-                INDENT + "level1" + EOL +
-                INDENT + INDENT + "level2" + EOL +
-                INDENT + "level1" + EOL +
-                "level0"
-                ;
-            
-            var lexTokens = LexTokens(source);
-            var tokens = new[]
-            {
-                MultipleSpaceTokensLexer.WORD,
-                MultipleSpaceTokensLexer.EOL,
-                MultipleSpaceTokensLexer.INDENT,
-                MultipleSpaceTokensLexer.WS,
-                MultipleSpaceTokensLexer.WS,
-                MultipleSpaceTokensLexer.WORD,
-                MultipleSpaceTokensLexer.EOL,
-                MultipleSpaceTokensLexer.INDENT,
-                MultipleSpaceTokensLexer.WS,
-                MultipleSpaceTokensLexer.WS,
-                MultipleSpaceTokensLexer.WS,
-                MultipleSpaceTokensLexer.WS,
-                MultipleSpaceTokensLexer.WORD,
-                MultipleSpaceTokensLexer.EOL,
-                MultipleSpaceTokensLexer.DEDENT,
-                MultipleSpaceTokensLexer.WS,
-                MultipleSpaceTokensLexer.WS,
-                MultipleSpaceTokensLexer.WORD,
-                MultipleSpaceTokensLexer.EOL,
-                MultipleSpaceTokensLexer.DEDENT,
-                MultipleSpaceTokensLexer.WORD,
-            };
+            MultipleSpaceTokensLexer.WORD,
+            MultipleSpaceTokensLexer.EOL,
+            MultipleSpaceTokensLexer.INDENT,
+            MultipleSpaceTokensLexer.WORD,
+            MultipleSpaceTokensLexer.EOL,
+            MultipleSpaceTokensLexer.INDENT,
+            MultipleSpaceTokensLexer.WORD,
+            MultipleSpaceTokensLexer.EOL,
+            MultipleSpaceTokensLexer.DEDENT,
+            MultipleSpaceTokensLexer.WORD,
+            MultipleSpaceTokensLexer.EOL,
+            MultipleSpaceTokensLexer.DEDENT,
+            MultipleSpaceTokensLexer.WORD,
+        };
 
-            Tokens.Assert(lexTokens, tokens);
-        }
+        Tokens.Assert(lexTokens, tokens);
+    }
 
-        [Fact]
-        public void TestLevels_JumpIndent()
+    [Fact]
+    public void TestLevels_JumpIndent()
+    {
+        var source =
+            EOL +                       // INDENTs are only detected after EOLs
+            INDENT + "level1" + EOL +   // to set indent size
+            "level0" + EOL +
+            INDENT + INDENT + "level2" + EOL +
+            INDENT + "level1" + EOL +
+            "level0"
+            ;
+
+        var lexTokens = LexTokens(source);
+        var tokens = new[]
         {
-            var source =
-                EOL +                       // INDENTs are only detected after EOLs
-                INDENT + "level1" + EOL +   // to set indent size
-                "level0" + EOL +
-                INDENT + INDENT + "level2" + EOL +
-                INDENT + "level1" + EOL +
-                "level0"
-                ;
+            MultipleSpaceTokensLexer.EOL,
+            MultipleSpaceTokensLexer.INDENT,
+            MultipleSpaceTokensLexer.WORD,
+            MultipleSpaceTokensLexer.EOL,
+            MultipleSpaceTokensLexer.DEDENT,
+            MultipleSpaceTokensLexer.WORD,
+            MultipleSpaceTokensLexer.EOL,
+            MultipleSpaceTokensLexer.INDENT,
+            MultipleSpaceTokensLexer.INDENT,
+            MultipleSpaceTokensLexer.WORD,
+            MultipleSpaceTokensLexer.EOL,
+            MultipleSpaceTokensLexer.DEDENT,
+            MultipleSpaceTokensLexer.WORD,
+            MultipleSpaceTokensLexer.EOL,
+            MultipleSpaceTokensLexer.DEDENT,
+            MultipleSpaceTokensLexer.WORD,
+        };
 
-            var lexTokens = LexTokens(source);
-            var tokens = new[]
-            {
-                MultipleSpaceTokensLexer.EOL,
-                MultipleSpaceTokensLexer.INDENT,
-                MultipleSpaceTokensLexer.WS,
-                MultipleSpaceTokensLexer.WS,
-                MultipleSpaceTokensLexer.WORD,
-                MultipleSpaceTokensLexer.EOL,
-                MultipleSpaceTokensLexer.DEDENT,
-                MultipleSpaceTokensLexer.WORD,
-                MultipleSpaceTokensLexer.EOL,
-                MultipleSpaceTokensLexer.INDENT,
-                MultipleSpaceTokensLexer.INDENT,
-                MultipleSpaceTokensLexer.WS,
-                MultipleSpaceTokensLexer.WS,
-                MultipleSpaceTokensLexer.WS,
-                MultipleSpaceTokensLexer.WS,
-                MultipleSpaceTokensLexer.WORD,
-                MultipleSpaceTokensLexer.EOL,
-                MultipleSpaceTokensLexer.DEDENT,
-                MultipleSpaceTokensLexer.WS,
-                MultipleSpaceTokensLexer.WS,
-                MultipleSpaceTokensLexer.WORD,
-                MultipleSpaceTokensLexer.EOL,
-                MultipleSpaceTokensLexer.DEDENT,
-                MultipleSpaceTokensLexer.WORD,
-            };
+        Tokens.Assert(lexTokens, tokens);
+    }
 
-            Tokens.Assert(lexTokens, tokens);
-        }
+    [Fact]
+    public void TestLevels_JumpDedent()
+    {
+        var source =
+            "level0" + EOL +
+            INDENT + "level1" + EOL +
+            INDENT + INDENT + "level2" + EOL +
+            "level0"
+            ;
 
-        [Fact]
-        public void TestLevels_JumpDedent()
+        var lexTokens = LexTokens(source);
+        var tokens = new[]
         {
-            var source =
-                "level0" + EOL +
-                INDENT + "level1" + EOL +
-                INDENT + INDENT + "level2" + EOL +
-                "level0"
-                ;
+            MultipleSpaceTokensLexer.WORD,
+            MultipleSpaceTokensLexer.EOL,
+            MultipleSpaceTokensLexer.INDENT,
+            MultipleSpaceTokensLexer.WORD,
+            MultipleSpaceTokensLexer.EOL,
+            MultipleSpaceTokensLexer.INDENT,
+            MultipleSpaceTokensLexer.WORD,
+            MultipleSpaceTokensLexer.EOL,
+            MultipleSpaceTokensLexer.DEDENT,
+            MultipleSpaceTokensLexer.DEDENT,
+            MultipleSpaceTokensLexer.WORD,
+        };
 
-            var lexTokens = LexTokens(source);
-            var tokens = new[]
-            {
-                MultipleSpaceTokensLexer.WORD,
-                MultipleSpaceTokensLexer.EOL,
-                MultipleSpaceTokensLexer.INDENT,
-                MultipleSpaceTokensLexer.WS,
-                MultipleSpaceTokensLexer.WS,
-                MultipleSpaceTokensLexer.WORD,
-                MultipleSpaceTokensLexer.EOL,
-                MultipleSpaceTokensLexer.INDENT,
-                MultipleSpaceTokensLexer.WS,
-                MultipleSpaceTokensLexer.WS,
-                MultipleSpaceTokensLexer.WS,
-                MultipleSpaceTokensLexer.WS,
-                MultipleSpaceTokensLexer.WORD,
-                MultipleSpaceTokensLexer.EOL,
-                MultipleSpaceTokensLexer.DEDENT,
-                MultipleSpaceTokensLexer.DEDENT,
-                MultipleSpaceTokensLexer.WORD,
-            };
+        Tokens.Assert(lexTokens, tokens);
+    }
 
-            Tokens.Assert(lexTokens, tokens);
-        }
+    [Fact]
+    public void TestLevels_EndDedent()
+    {
+        var source =
+            "level0" + EOL +
+            INDENT + "level1"
+            ;
 
-        [Fact]
-        public void TestLevels_EndDedent()
+        var lexTokens = LexTokens(source);
+        var tokens = new[]
         {
-            var source =
-                "level0" + EOL +
-                INDENT + "level1"
-                ;
+            MultipleSpaceTokensLexer.WORD,
+            MultipleSpaceTokensLexer.EOL,
+            MultipleSpaceTokensLexer.INDENT,
+            MultipleSpaceTokensLexer.WORD,
+            MultipleSpaceTokensLexer.DEDENT
+        };
 
-            var lexTokens = LexTokens(source);
-            var tokens = new[]
-            {
-                MultipleSpaceTokensLexer.WORD,
-                MultipleSpaceTokensLexer.EOL,
-                MultipleSpaceTokensLexer.INDENT,
-                MultipleSpaceTokensLexer.WS,
-                MultipleSpaceTokensLexer.WS,
-                MultipleSpaceTokensLexer.WORD,
-                MultipleSpaceTokensLexer.DEDENT
-            };
+        Tokens.Assert(lexTokens, tokens);
+    }
 
-            Tokens.Assert(lexTokens, tokens);
-        }
+    [Fact]
+    public void TestLevels_NewlineEndDedent()
+    {
+        var source =
+            "level0" + EOL +
+            INDENT + "level1" + EOL
+            ;
 
-        [Fact]
-        public void TestLevels_RepeatIndent()
+        var lexTokens = LexTokens(source);
+        var tokens = new[]
         {
-            var source =
-                "level0" + EOL +
-                INDENT + "level1a" + EOL +
-                INDENT + "level1b" + EOL
-                ;
+            MultipleSpaceTokensLexer.WORD,
+            MultipleSpaceTokensLexer.EOL,
+            MultipleSpaceTokensLexer.INDENT,
+            MultipleSpaceTokensLexer.WORD,
+            MultipleSpaceTokensLexer.EOL,
+            MultipleSpaceTokensLexer.DEDENT
+        };
 
-            var lexTokens = LexTokens(source);
-            var tokens = new[]
-            {
-                MultipleSpaceTokensLexer.WORD,
-                MultipleSpaceTokensLexer.EOL,
-                MultipleSpaceTokensLexer.INDENT,
-                MultipleSpaceTokensLexer.WS,
-                MultipleSpaceTokensLexer.WS,
-                MultipleSpaceTokensLexer.WORD,
-                MultipleSpaceTokensLexer.EOL,
-                MultipleSpaceTokensLexer.WS,
-                MultipleSpaceTokensLexer.WS,
-                MultipleSpaceTokensLexer.WORD,
-                MultipleSpaceTokensLexer.EOL,
-                MultipleSpaceTokensLexer.DEDENT
-            };
+        Tokens.Assert(lexTokens, tokens);
+    }
 
-            Tokens.Assert(lexTokens, tokens);
-        }
+    [Fact]
+    public void TestLevels_RepeatIndent()
+    {
+        var source =
+            "level0" + EOL +
+            INDENT + "level1a" + EOL +
+            INDENT + "level1b" + EOL
+            ;
 
-        [Fact]
-        public void TestLevels_ExtraNewLines()
+        var lexTokens = LexTokens(source);
+        var tokens = new[]
         {
-            var source =
-                "level0" + EOL +
-                INDENT + "level1" + EOL +
-                EOL +
-                EOL +
-                "level0" + EOL +
-                INDENT + "level1a" + EOL +
-                EOL +
-                INDENT + "level1b"
-                ;
+            MultipleSpaceTokensLexer.WORD,
+            MultipleSpaceTokensLexer.EOL,
+            MultipleSpaceTokensLexer.INDENT,
+            MultipleSpaceTokensLexer.WORD,
+            MultipleSpaceTokensLexer.EOL,
+            MultipleSpaceTokensLexer.WORD,
+            MultipleSpaceTokensLexer.EOL,
+            MultipleSpaceTokensLexer.DEDENT
+        };
 
-            var lexTokens = LexTokens(source);
-            var tokens = new[]
-            {
-                MultipleSpaceTokensLexer.WORD,
-                MultipleSpaceTokensLexer.EOL,
-                MultipleSpaceTokensLexer.INDENT,
-                MultipleSpaceTokensLexer.WS,
-                MultipleSpaceTokensLexer.WS,
-                MultipleSpaceTokensLexer.WORD,
-                MultipleSpaceTokensLexer.EOL,
-                MultipleSpaceTokensLexer.EOL,
-                MultipleSpaceTokensLexer.EOL,
-                MultipleSpaceTokensLexer.DEDENT,
-                MultipleSpaceTokensLexer.WORD,
-                MultipleSpaceTokensLexer.EOL,
-                MultipleSpaceTokensLexer.INDENT,
-                MultipleSpaceTokensLexer.WS,
-                MultipleSpaceTokensLexer.WS,
-                MultipleSpaceTokensLexer.WORD,
-                MultipleSpaceTokensLexer.EOL,
-                MultipleSpaceTokensLexer.EOL,
-                MultipleSpaceTokensLexer.WS,
-                MultipleSpaceTokensLexer.WS,
-                MultipleSpaceTokensLexer.WORD,
-                MultipleSpaceTokensLexer.DEDENT
-            };
+        Tokens.Assert(lexTokens, tokens);
+    }
 
-            Tokens.Assert(lexTokens, tokens);
-        }
+    [Fact]
+    public void TestLevels_ExtraNewLines()
+    {
+        var source =
+            "level0" + EOL +
+            INDENT + "level1" + EOL +
+            EOL +
+            EOL +
+            "level0" + EOL +
+            INDENT + "level1a" + EOL +
+            EOL +
+            INDENT + "level1b"
+            ;
 
-        [Fact]
-        public void TestLevels_InvalidIndentException()
+        var lexTokens = LexTokens(source);
+        var tokens = new[]
         {
-            var source =
-                EOL +
-                INDENT + INDENT + "level2" + EOL +      // indent size is set here
-                INDENT + "level1"                       // indent length is too short!
-                ;
+            MultipleSpaceTokensLexer.WORD,
+            MultipleSpaceTokensLexer.EOL,
+            MultipleSpaceTokensLexer.INDENT,
+            MultipleSpaceTokensLexer.WORD,
+            MultipleSpaceTokensLexer.EOL,
+            MultipleSpaceTokensLexer.EOL,
+            MultipleSpaceTokensLexer.EOL,
+            MultipleSpaceTokensLexer.DEDENT,
+            MultipleSpaceTokensLexer.WORD,
+            MultipleSpaceTokensLexer.EOL,
+            MultipleSpaceTokensLexer.INDENT,
+            MultipleSpaceTokensLexer.WORD,
+            MultipleSpaceTokensLexer.EOL,
+            MultipleSpaceTokensLexer.EOL,
+            MultipleSpaceTokensLexer.WORD,
+            MultipleSpaceTokensLexer.DEDENT
+        };
 
-            Action errorAction = () => LexTokens(source);
-            errorAction.Should().Throw<InvalidIndentException>();
-        }
+        Tokens.Assert(lexTokens, tokens);
+    }
 
-        private static IList<IToken> LexTokens(string source)
-        {
-            var stream = new AntlrInputStream(source);
-            var lexer = new MultipleSpaceTokensLexer(stream)
-            {
-                WhitespaceMode = WhitespaceMode.AfterIndent
-            };
-            lexer.InitializeTokens(MultipleSpaceTokensLexer.INDENT, MultipleSpaceTokensLexer.DEDENT, MultipleSpaceTokensLexer.EOL);
-            return lexer.GetAllTokens();
-        }
+    [Fact]
+    public void TestLevels_InvalidIndentException()
+    {
+        var source =
+            EOL +
+            INDENT + INDENT + "level2" + EOL +      // indent size is set here
+            INDENT + "level1"                       // indent length is too short!
+            ;
+
+        Action errorAction = () => LexTokens(source);
+        errorAction.Should().Throw<InvalidIndentException>();
+    }
+
+    private IList<IToken> LexTokens(string source)
+    {
+        var stream = new AntlrInputStream(source);
+        var lexer = new MultipleSpaceTokensLexer(stream);
+        lexer.InitializeTokens(MultipleSpaceTokensLexer.INDENT, MultipleSpaceTokensLexer.DEDENT, MultipleSpaceTokensLexer.EOL);
+        var lexTokens = lexer.GetAllTokens();
+        _output.Write(lexer.TokenTypeMap.ToDictionary(kvp => kvp.Value, kvp => kvp.Key), lexTokens);
+        return lexTokens;
     }
 }
